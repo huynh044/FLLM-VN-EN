@@ -7,7 +7,6 @@ This project focuses on fine-tuning a large language model (LLM) for Vietnamese 
 ```
 FLLM-VN-EN/
 ├── data/
-│   ├── raw/                 # Raw translation datasets
 │   ├── processed/           # Preprocessed and formatted data
 │   └── validation/          # Validation datasets
 ├── models/
