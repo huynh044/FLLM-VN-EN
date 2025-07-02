@@ -55,11 +55,6 @@ FLLM-VN-EN/
 - Custom transformer architectures
 
 ## Dataset Sources
-
-- OPUS parallel corpora
-- OpenSubtitles
-- News commentary
-- Custom scraped data
-- Wikipedia parallel articles
+https://huggingface.co/datasets/ncduy/mt-en-vi
 
 python -m pip freeze --local > requirements.txt // Save all packages
