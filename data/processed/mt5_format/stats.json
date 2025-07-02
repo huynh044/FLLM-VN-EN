@@ -1,0 +1,10 @@
+{
+  "dataset_name": "ncduy/mt-en-vi",
+  "total_original": 100000,
+  "max_samples_requested": 100000,
+  "after_preprocessing": 100000,
+  "after_filtering": 99868,
+  "train_size": 79894,
+  "val_size": 9986,
+  "test_size": 9988
+}

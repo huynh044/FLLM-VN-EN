@@ -1,0 +1,22 @@
+# Training configuration for larger model (mT5-base)
+model:
+  name: "google/mt5-base" 
+  max_source_length: 512
+  max_target_length: 512
+
+peft:
+  enabled: true
+  r: 32
+  lora_alpha: 64
+  target_modules: ["q", "k", "v", "o", "wi_0", "wi_1", "wo"]
+
+training:
+  output_dir: "models/checkpoints/mt5-base-vi-en"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 8
+  learning_rate: 2e-4
+  warmup_steps: 1500
+  eval_steps: 2000
+  save_steps: 2000

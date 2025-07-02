@@ -1,0 +1,61 @@
+# Model Configuration
+model:
+  name: "google/mt5-small"  # Base model to fine-tune
+  tokenizer_name: null  # Use same as model if null
+  max_source_length: 256
+  max_target_length: 256
+  
+# PEFT Configuration (LoRA)
+peft:
+  enabled: true
+  r: 16                    # LoRA rank
+  lora_alpha: 32          # LoRA alpha parameter
+  lora_dropout: 0.1       # LoRA dropout
+  bias: "none"            # Bias type
+  target_modules: ["q", "v"]  # Target attention modules
+  
+# Training Configuration
+training:
+  output_dir: "models/checkpoints/mt5-small-vi-en"
+  num_train_epochs: 5
+  per_device_train_batch_size: 8
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 4
+  learning_rate: 3e-4
+  weight_decay: 0.01
+  warmup_steps: 1000
+  eval_steps: 1000
+  save_steps: 1000
+  logging_steps: 100
+  load_best_model_at_end: true
+  metric_for_best_model: "bleu"
+  greater_is_better: true
+  early_stopping_patience: 3
+  fp16: true
+  dataloader_num_workers: 4
+  generation_max_length: 256
+  generation_num_beams: 4
+  
+# Data Configuration
+data:
+  dataset_path: "data/processed/mt5_format"
+  format_type: "t5"  # "t5" or "seq2seq"
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  min_length: 5
+  max_length: 256
+  tokenize_vietnamese: true
+  
+# Preprocessing Configuration
+preprocessing:
+  clean_text: true
+  remove_duplicates: true
+  filter_by_length: true
+  normalize_punctuation: true
+  
+# Evaluation Configuration
+evaluation:
+  metrics: [ "rouge", "length"]
+  beam_sizes: [1, 4, 8]
+  max_eval_samples: 1000
