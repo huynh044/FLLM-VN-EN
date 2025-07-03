@@ -34,7 +34,7 @@ FLLM-VN-EN/
 
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
 
 ## Quick Start
@@ -57,3 +57,9 @@ FLLM-VN-EN/
 https://huggingface.co/datasets/ncduy/mt-en-vi
 
 python -m pip freeze --local > requirements.txt // Save all packages
+
+## Simple Steps
+- Step 1: Download and preprocess dataset: python src/data_preprocessing/preprocess.py
+- Step 2: Fine-tune the dataset: python src/training/fine_tune.py
+- After that: you can use the model trained and start script: python main.py
+--> http://localhost:8000
