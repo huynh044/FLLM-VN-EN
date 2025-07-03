@@ -45,13 +45,7 @@ FLLM-VN-EN/
 4. Evaluate the model: `python src/evaluation/evaluate.py`
 
 ## Models Supported
-
-- GPT-2/GPT-3.5 variants
-- T5 (Text-to-Text Transfer Transformer)
 - mT5 (multilingual T5)
-- BART
-- MarianMT
-- Custom transformer architectures
 
 ## Dataset Sources
 https://huggingface.co/datasets/ncduy/mt-en-vi
