@@ -133,7 +133,7 @@ GET /model-info
 
 ### API Configuration
 
-Edit `api.py` to configure:
+Edit `main.py` to configure:
 
 ```python
 # Model settings
