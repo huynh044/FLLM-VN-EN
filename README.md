@@ -8,7 +8,6 @@ This project focuses on fine-tuning a large language model (LLM) for Vietnamese 
 FLLM-VN-EN/
 ├── data/
 │   ├── processed/           # Preprocessed and formatted data
-│   └── validation/          # Validation datasets
 ├── models/
 │   ├── base/               # Base model downloads
 │   ├── checkpoints/        # Training checkpoints
@@ -16,7 +15,6 @@ FLLM-VN-EN/
 ├── src/
 │   ├── data_processing/    # Data preprocessing scripts
 │   ├── training/           # Training and fine-tuning scripts
-│   ├── evaluation/         # Model evaluation scripts
 │   └── inference/          # Inference and prediction scripts
 ├── notebooks/              # Jupyter notebooks for experimentation
 ├── configs/                # Configuration files

@@ -82,14 +82,14 @@ class SimpleTranslator:
                 self.model = PeftModel.from_pretrained(base_model, self.model_path)
                 self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
                 
-                logger.info("✅ Loaded PEFT model successfully")
+                logger.info("Loaded PEFT model successfully")
                 
             else:
                 # Load regular model
                 self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_path)
                 self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
                 
-                logger.info("✅ Loaded regular model successfully")
+                logger.info("Loaded regular model successfully")
             
             self.model.eval()
             self.model.to(self.device)
@@ -97,7 +97,7 @@ class SimpleTranslator:
             return True
             
         except Exception as e:
-            logger.error(f"❌ Failed to load model: {e}")
+            logger.error(f"Failed to load model: {e}")
             return False
     
     def translate(self, vietnamese_text: str, max_length: int = 128) -> dict:
@@ -160,13 +160,13 @@ def find_and_load_model():
                 translator = SimpleTranslator(model_path)
                 if translator.load_model():
                     current_model_path = model_path
-                    logger.info(f"✅ Successfully loaded model: {model_path}")
+                    logger.info(f"Successfully loaded model: {model_path}")
                     return True
         except Exception as e:
-            logger.warning(f"⚠️ Failed to load {model_path}: {e}")
+            logger.warning(f"Failed to load {model_path}: {e}")
             continue
     
-    logger.error("❌ No model could be loaded")
+    logger.error("No model could be loaded")
     return False
 
 # Mount static files for web interface
@@ -182,7 +182,7 @@ async def serve_web_interface():
 @app.on_event("startup")
 async def startup():
     if not find_and_load_model():
-        logger.error("❌ Failed to load any model")
+        logger.error("Failed to load any model")
 
 # API Endpoints - Pure JSON responses only
 @app.get("/api/status", response_model=ModelStatus)

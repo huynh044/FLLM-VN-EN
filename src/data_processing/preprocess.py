@@ -332,7 +332,7 @@ def main():
     processor.load_tokenizer("google/mt5-small")
     
     # Processing information
-    logger.info("🔧 Processing Configuration:")
+    logger.info("Processing Configuration:")
     logger.info(f"   Dataset: {args.dataset}")
     logger.info(f"   Max samples: {args.max_samples if args.max_samples else 'ALL'}")
     logger.info(f"   Output: {args.output_dir}")
@@ -349,9 +349,9 @@ def main():
             max_samples=args.max_samples,
             batch_size=args.batch_size
         )
-        logger.info("✅ Successfully processed HF dataset!")
+        logger.info("Successfully processed HF dataset!")
     except Exception as e:
-        logger.error(f"❌ Failed to process HF dataset: {e}")
+        logger.error(f"Failed to process HF dataset: {e}")
         raise
 
 

@@ -281,7 +281,7 @@ class VietnameseTranslator:
     
     def interactive_mode(self):
         """Run interactive translation mode."""
-        print("🇻🇳 ➡️  🇺🇸 Vietnamese to English Translator")
+        print("Vietnamese to English Translator")
         print("=" * 50)
         print("Commands:")
         print("  'quit' or 'exit' - Exit the translator")
@@ -300,10 +300,10 @@ class VietnameseTranslator:
         
         while True:
             try:
-                vietnamese_text = input("\n🇻🇳 Vietnamese: ").strip()
+                vietnamese_text = input("\nVietnamese: ").strip()
                 
                 if vietnamese_text.lower() in ['quit', 'exit']:
-                    print("Goodbye! 👋")
+                    print("Goodbye!")
                     break
                 
                 elif vietnamese_text.lower() == 'help':
@@ -336,10 +336,10 @@ class VietnameseTranslator:
                 elif vietnamese_text:
                     # Translate
                     translation = self.translate(vietnamese_text, **settings)
-                    print(f"🇺🇸 English: {translation}")
+                    print(f"English: {translation}")
                 
             except KeyboardInterrupt:
-                print("\nGoodbye! 👋")
+                print("\nGoodbye!")
                 break
             except Exception as e:
                 print(f"Error: {e}")
