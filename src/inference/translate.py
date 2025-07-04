@@ -80,30 +80,80 @@ class VietnameseTranslator:
             raise
     
     def _load_model(self):
-        """Load the fine-tuned model."""
+        """Load the fine-tuned model with PyTorch 2.5.1 compatibility."""
+        # Try multiple loading strategies for PyTorch 2.5.1 compatibility
+        loading_strategies = [
+            ("safetensors", {"use_safetensors": True}),
+            ("without_safetensors", {"use_safetensors": False}),
+            ("trust_remote_code", {"trust_remote_code": True}),
+            ("basic", {})
+        ]
+        
+        for strategy_name, kwargs in loading_strategies:
+            try:
+                logger.info(f"Trying {strategy_name} loading strategy...")
+                
+                if self.use_peft:
+                    # Load PEFT model
+                    logger.info(f"Loading PEFT model from {self.model_path}")
+                    config = PeftConfig.from_pretrained(self.model_path)
+                    base_model = AutoModelForSeq2SeqLM.from_pretrained(
+                        config.base_model_name_or_path,
+                        torch_dtype=torch.float32,  # Use float32 for stability
+                        **kwargs
+                    )
+                    model = PeftModel.from_pretrained(
+                        base_model, 
+                        self.model_path,
+                        **kwargs
+                    )
+                else:
+                    # Load regular fine-tuned model
+                    logger.info(f"Loading model from {self.model_path}")
+                    model = AutoModelForSeq2SeqLM.from_pretrained(
+                        self.model_path,
+                        torch_dtype=torch.float32,  # Use float32 for stability
+                        **kwargs
+                    )
+                
+                model.eval()
+                logger.info(f"Successfully loaded model using {strategy_name} strategy")
+                return model
+                
+            except Exception as e:
+                logger.warning(f"Failed to load model with {strategy_name} strategy: {e}")
+                continue
+        
+        # If all strategies fail, try one more time with minimal settings
+        logger.error("All loading strategies failed. Trying minimal fallback...")
         try:
             if self.use_peft:
-                # Load PEFT model
-                logger.info(f"Loading PEFT model from {self.model_path}")
                 config = PeftConfig.from_pretrained(self.model_path)
                 base_model = AutoModelForSeq2SeqLM.from_pretrained(
                     config.base_model_name_or_path,
-                    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+                    torch_dtype=torch.float32,
+                    low_cpu_mem_usage=True
                 )
-                model = PeftModel.from_pretrained(base_model, self.model_path)
+                model = PeftModel.from_pretrained(
+                    base_model, 
+                    self.model_path,
+                    low_cpu_mem_usage=True
+                )
             else:
-                # Load regular fine-tuned model
-                logger.info(f"Loading model from {self.model_path}")
                 model = AutoModelForSeq2SeqLM.from_pretrained(
                     self.model_path,
-                    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+                    torch_dtype=torch.float32,
+                    low_cpu_mem_usage=True
                 )
             
             model.eval()
+            logger.warning("Loaded model with minimal fallback - functionality may be limited")
             return model
             
-        except Exception as e:
-            logger.error(f"Failed to load model: {e}")
+        except Exception as final_error:
+            logger.error(f"All loading attempts failed: {final_error}")
+            logger.error("This is likely due to PyTorch 2.5.1 compatibility issues.")
+            logger.error("Consider upgrading to PyTorch 2.6.0+ or converting model to safetensors format.")
             raise
     
     def translate(self, 
