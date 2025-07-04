@@ -3,12 +3,13 @@
 This project focuses on fine-tuning a large language model (LLM) for Vietnamese to English translation tasks.
 
 ## Cuda Version
+```bash
 nvcc: NVIDIA (R) Cuda compiler driver
 Copyright (c) 2005-2025 NVIDIA Corporation
 Built on Wed_Jan_15_19:38:46_Pacific_Standard_Time_2025
 Cuda compilation tools, release 12.8, V12.8.61
 Build cuda_12.8.r12.8/compiler.35404655_0
-
+```
 ## Project Structure
 
 ```
