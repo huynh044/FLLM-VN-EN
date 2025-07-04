@@ -1,324 +1,168 @@
-# Vietnamese-English Translation API & Web Interface
+# Vietnamese-English Translation API
 
-This directory contains the API backend and web frontend for the Vietnamese-English translation system.
+Simple API server with web interface for Vietnamese to English translation.
 
 ## Quick Start
 
 ### 1. Install Dependencies
-
 ```bash
-# Install Python dependencies
 cd d:\Project\FLLM-VN-EN
 pip install fastapi uvicorn transformers torch peft
 ```
 
-### 2. Start the API Server
-
+### 2. Start Server
 ```bash
-# Start FastAPI server
-python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+# Option 1: Run directly
+python main.py
+
+# Option 2: Use uvicorn
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 3. Access the Web Interface
+### 3. Access Interface
+- **Web UI**: http://localhost:8000/
+- **API Docs**: http://localhost:8000/docs
 
-Open your browser and go to:
-- **Web Interface**: http://localhost:8000/
-- **API Documentation**: http://localhost:8000/docs
-- **Alternative API Docs**: http://localhost:8000/redoc
+## API Usage
 
-## API Endpoints
-
-### Translation Endpoints
-
-#### Single Translation
-```http
-POST /translate
-Content-Type: application/json
-
-{
-    "text": "Xin chào, tôi là một sinh viên.",
-    "max_length": 256,
-    "num_beams": 4,
-    "temperature": 1.0
-}
+### Simple Translation
+```bash
+curl -X POST "http://localhost:8000/translate" \
+     -H "Content-Type: application/json" \
+     -d '{"text": "Xin chào"}'
 ```
 
 **Response:**
 ```json
 {
-    "original_text": "Xin chào, tôi là một sinh viên.",
-    "translated_text": "Hello, I am a student.",
-    "confidence_score": 0.95,
-    "processing_time": 1.23
+    "original_text": "Xin chào",
+    "translated_text": "Hello",
+    "processing_time": 0.5
 }
 ```
 
-#### Batch Translation
-```http
-POST /translate-batch
-Content-Type: application/json
-
-{
-    "texts": [
-        "Xin chào",
-        "Tôi là sinh viên",
-        "Hôm nay trời đẹp"
-    ],
-    "max_length": 256,
-    "num_beams": 4
-}
+### Advanced Translation
+```bash
+curl -X POST "http://localhost:8000/translate" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "text": "Xin chào thế giới",
+       "max_length": 256,
+       "num_beams": 4,
+       "temperature": 1.0
+     }'
 ```
 
-**Response:**
-```json
-{
-    "translations": [
-        {
-            "original_text": "Xin chào",
-            "translated_text": "Hello",
-            "processing_time": 0.5
-        },
-        {
-            "original_text": "Tôi là sinh viên",
-            "translated_text": "I am a student",
-            "processing_time": 0.6
-        },
-        {
-            "original_text": "Hôm nay trời đẹp",
-            "translated_text": "The weather is nice today",
-            "processing_time": 0.7
-        }
-    ],
-    "total_processing_time": 1.8
-}
-```
-
-#### Model Information
-```http
-GET /model-info
-```
-
-**Response:**
-```json
-{
-    "model_name": "google/mt5-small",
-    "model_type": "mT5",
-    "is_loaded": true,
-    "device": "cpu"
-}
+### Model Info
+```bash
+curl -X GET "http://localhost:8000/model-info"
 ```
 
 ## Web Interface Features
 
-### Main Translation Interface
-- **Real-time Translation**: Type Vietnamese text and get English translation
-- **Adjustable Parameters**: Control translation quality with max_length, num_beams, and temperature
-- **Keyboard Shortcuts**: Press `Ctrl+Enter` to translate
-- **Auto-paste Translation**: Automatically translates when you paste text (for short texts)
-- **Character Counter**: Shows character count with color coding
-
-### Translation History
-- **Persistent History**: Saves your translations locally
-- **Quick Reuse**: Click any history item to reload it
-- **Copy Translations**: One-click copy to clipboard
-- **History Management**: Clear individual items or entire history
-
-### Advanced Features
-- **Text Swapping**: Swap source and target text
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Progress Indicators**: Visual feedback during translation
-- **Error Handling**: User-friendly error messages
+- **Real-time Translation**: Type Vietnamese → Get English
+- **Translation History**: Saves previous translations
+- **Copy to Clipboard**: One-click copy results
+- **Adjustable Settings**: Control translation quality
+- **Responsive Design**: Works on mobile/desktop
 
 ## Configuration
 
-### API Configuration
-
-Edit `main.py` to configure:
-
+### Change Model
+Edit `main.py`:
 ```python
-# Model settings
-MODEL_PATH = "google/mt5-small"  # Change to your fine-tuned model
-USE_PEFT = False  # Set to True if using LoRA/PEFT
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
-# API settings
-HOST = "0.0.0.0"
-PORT = 8000
+# Use your fine-tuned model
+MODEL_PATH = "models/fine_tuned/my-model"
+USE_PEFT = True  # If using LoRA adapters
 ```
 
-### Web Interface Configuration
-
-Edit `web/static/app.js` to configure:
-
+### Translation Settings
+Edit `web/static/app.js`:
 ```javascript
-// API endpoint
-this.apiBaseUrl = 'http://localhost:8000';
-
-// Translation settings
 const defaultSettings = {
-    maxLength: 256,
-    numBeams: 4,
-    temperature: 1.0
+    maxLength: 256,    // Max output length
+    numBeams: 4,       // Translation quality (1-8)
+    temperature: 1.0   // Creativity (0.1-2.0)
 };
 ```
 
 ## Using Your Fine-tuned Model
 
-To use your own fine-tuned model instead of the default:
-
-1. **Update API configuration:**
-```python
-# In api.py
-MODEL_PATH = "./models/fine_tuned/my-finetuned-model"  # Path to your model
-USE_PEFT = True  # If using LoRA/PEFT adapters
-```
-
-2. **Place your model files:**
+1. **Place model files:**
 ```
 models/
-├── my-finetuned-model/
-│   ├── config.json
-│   ├── pytorch_model.bin
-│   ├── tokenizer.json
-│   ├── tokenizer_config.json
-│   └── special_tokens_map.json
+├── fine_tuned/
+│   └── my-model/
+│       ├── adapter_config.json
+│       └── adapter_model.safetensors
 ```
 
-3. **For PEFT/LoRA models:**
-```
-models/
-├── base-model/          # Base model (e.g., mt5-small)
-└── peft-adapters/       # LoRA adapters
-    ├── adapter_config.json
-    └── adapter_model.bin
-```
-
-## Performance Optimization
-
-### GPU Acceleration
-```bash
-# Install CUDA-enabled PyTorch
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-
-### Model Optimization
+2. **Update config:**
 ```python
-# Enable half precision (in api.py)
-model = model.half()  # Reduces memory usage
-
-# Enable model compilation (PyTorch 2.0+)
-model = torch.compile(model)
-```
-
-### Caching
-```python
-# Enable response caching
-from functools import lru_cache
-
-@lru_cache(maxsize=1000)
-def cached_translate(text: str):
-    # Translation logic here
-    pass
-```
-
-## Deployment
-
-### Local Development
-```bash
-uvicorn api:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Production Deployment
-```bash
-# Using Gunicorn
-pip install gunicorn
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker api:app --bind 0.0.0.0:8000
-
-# Using Docker (create Dockerfile)
-docker build -t vn-en-translator .
-docker run -p 8000:8000 vn-en-translator
-```
-
-### Environment Variables
-```bash
-# Set environment variables for production
-export MODEL_PATH="/path/to/your/model"
-export API_HOST="0.0.0.0"
-export API_PORT="8000"
-export WORKERS=4
+# In main.py
+MODEL_PATH = "models/fine_tuned/my-model"
+USE_PEFT = True
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Model Loading Error**
-   ```
-   Solution: Check model path and ensure all model files are present
-   ```
+**Model not loading:**
+- Check model path exists
+- Verify all model files present
 
-2. **CORS Error**
-   ```
-   Solution: Update CORS settings in api.py for your domain
-   ```
+**Slow translation:**
+- Reduce `num_beams` (4 → 2)
+- Use smaller `max_length` (256 → 128)
 
-3. **Out of Memory**
-   ```
-   Solution: Use smaller batch sizes or enable model quantization
-   ```
+**Out of memory:**
+- Use CPU instead of GPU
+- Reduce batch size
 
-4. **Slow Translation**
-   ```
-   Solution: Use GPU, reduce num_beams, or use a smaller model
-   ```
+### Performance Tips
 
-### Performance Monitoring
-```python
-# Add logging to monitor performance
-import time
-import logging
+- **GPU**: Install CUDA-enabled PyTorch for faster translation
+- **Caching**: Frequently used translations are cached
+- **Batch**: Use batch endpoints for multiple texts
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+## Advanced Usage
 
-# In translation function
-start_time = time.time()
-# ... translation logic ...
-logger.info(f"Translation took {time.time() - start_time:.2f}s")
-```
-
-## API Testing
-
-### Using curl
-```bash
-# Test translation endpoint
-curl -X POST "http://localhost:8000/translate" \
-     -H "Content-Type: application/json" \
-     -d '{"text": "Xin chào", "max_length": 256}'
-
-# Test model info
-curl -X GET "http://localhost:8000/model-info"
-```
-
-### Using Python requests
+### Using Python
 ```python
 import requests
 
-# Single translation
 response = requests.post(
     "http://localhost:8000/translate",
-    json={"text": "Xin chào thế giới", "max_length": 256}
+    json={"text": "Xin chào Việt Nam"}
 )
-print(response.json())
-
-# Batch translation
-response = requests.post(
-    "http://localhost:8000/translate-batch",
-    json={"texts": ["Xin chào", "Tạm biệt"]}
-)
-print(response.json())
+print(response.json()["translated_text"])
 ```
 
-## License
+### Custom Parameters
+```python
+response = requests.post(
+    "http://localhost:8000/translate",
+    json={
+        "text": "Tôi yêu Việt Nam",
+        "max_length": 128,
+        "num_beams": 2,
+        "temperature": 0.7
+    }
+)
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Production Deployment
+
+### Using Gunicorn
+```bash
+pip install gunicorn
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000
+```
+
+### Environment Variables
+```bash
+export MODEL_PATH="/path/to/model"
+export API_PORT="8000"
+export DEVICE="cuda"  # or "cpu"
+```
